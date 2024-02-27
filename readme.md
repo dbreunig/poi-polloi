@@ -13,3 +13,20 @@ gem install sequel
 ```
 
 This project will be contained within a Docker container shortly...
+
+## Running the API service
+
+First, run the `setup.sh` file to download the data and set up the database.
+
+```bash
+./setup.sh
+```
+
+The app is a simple Roda application, which can be run with `rackup`. The API service will be available at `http://localhost:9292`.
+
+Currently, the API service has the following endpoints:
+
+- `GET /poi?id=[ID]` - Returns data for a POI with the given ID.
+- `GET /neaby?lat=[LAT]&lon=[LON]&page=[PAGE]` - Returns data for POIs nearest the provided coordinates. The `page` parameter is optional and defaults to 1.
+
+Coming soon: text search.

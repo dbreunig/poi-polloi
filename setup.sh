@@ -11,7 +11,7 @@ release_date=$(echo $recent_dir | awk -F '/' '{print $2}')
 
 # Download the entire directory
 echo "Downloading data from ${release_date}"
-aws s3 cp s3://overturemaps-us-west-2/release/$release_date/theme=places data/${release_date} --recursive
+# aws s3 cp s3://overturemaps-us-west-2/release/$release_date/theme=places data/${release_date} --recursive
 
 # Extract the data you want into a CSV file
 echo "Extracting data from ${release_date}"
@@ -24,7 +24,7 @@ duckdb :memory: <<SQL
       ST_GeomFromWKB(geometry) AS geometry,
       ST_X(ST_GeomFromWKB(geometry)) AS longitude,
       ST_Y(ST_GeomFromWKB(geometry)) AS latitude,
-      list_filter(names.common, x -> x.language = 'local')[1]['value'] AS name,
+      names.primary,
       updateTime,
       categories.main as main_category,
       categories.alternate as alternate_categories,
@@ -33,7 +33,7 @@ duckdb :memory: <<SQL
       socials[1] as social,
       emails[1] as email,
       phones[1] as phone,
-      brand.names.common[1].value as brand,
+      brand.names.primary as brand,
       addresses[1].freeform as address,
       addresses[1].locality as locality,
       addresses[1].postcode as postcode,

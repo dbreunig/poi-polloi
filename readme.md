@@ -12,8 +12,6 @@ gem install roda
 gem install sequel
 ```
 
-This project will be contained within a Docker container shortly...
-
 ## Running the API service
 
 First, run the `setup.sh` file to download the data and set up the database.
@@ -28,5 +26,4 @@ Currently, the API service has the following endpoints:
 
 - `GET /poi?id=[ID]` - Returns data for a POI with the given ID.
 - `GET /neaby?lat=[LAT]&lon=[LON]&page=[PAGE]` - Returns data for POIs nearest the provided coordinates. The `page` parameter is optional and defaults to 1.
-
-Coming soon: text search.
+- `GET /search?query=[QUERY]&country=[COUNTRY]&page=[PAGE]` - Returns data for POIs that match the provided query. The `country` parameter is the two-letter country code (e.g. "US"). The `page` parameter is optional and defaults to 1.

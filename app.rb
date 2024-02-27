@@ -72,11 +72,19 @@ class PoiPolloi < Roda
 
     r.on "search" do
       r.get do
-        lat = r.params["lat"]
-        lon = r.params["lon"]
         query = r.params["query"]
-        # Your logic for /search endpoint goes here; not currently impliented
-        "Search endpoint: latitude=#{lat}, longitude=#{lon}, query=#{query}"
+        page = r.params["page"].to_i
+        country = r.params["country"]
+        page = 1 if page < 1
+        offset = (page - 1) * RESULTS_PER_PAGE
+        results = db.execute("
+          SELECT p.id, p.latitude, p.longitude, p.name, p.main_category, p.website,
+          p.social, p.phone, p.address, p.locality, p.postcode, p.region, p.country
+          FROM places AS p WHERE rowid IN (
+            SELECT rowid FROM fts_index WHERE fts_index MATCH ?
+          ) AND p.country = ? LIMIT ? OFFSET ?
+        ", query, country, RESULTS_PER_PAGE, offset)
+        results.to_json
       end
     end
   end

@@ -11,7 +11,7 @@ release_date=$(echo $recent_dir | awk -F '/' '{print $2}')
 
 # Download the entire directory
 echo "Downloading data from ${release_date}"
-# aws s3 cp s3://overturemaps-us-west-2/release/$release_date/theme=places data/${release_date} --recursive
+aws s3 cp s3://overturemaps-us-west-2/release/$release_date/theme=places data/${release_date} --recursive
 
 # Extract the data you want into a CSV file
 echo "Extracting data from ${release_date}"

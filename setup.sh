@@ -11,13 +11,6 @@ release_date=$(echo $release_json | jq -r '.latest')
 echo "Downloading data from ${release_date}"
 aws s3 cp s3://overturemaps-us-west-2/release/$release_date/theme=places data/${release_date} --recursive
 
-# Access the downloaded data and print the headers for the parquet to stdout
-echo "Accessing the downloaded data and printing the headers"
-duckdb :memory: <<SQL
-  INSTALL parquet;
-  PRAGMA table_info(parquet_scan('data/${release_date}/type=place/*.parquet'));
-SQL
-
 # Extract the data you want into a CSV file
 echo "Extracting data from ${release_date}"
 duckdb :memory: <<SQL
@@ -177,5 +170,5 @@ SELECT COUNT(*) FROM places;
 SQL
 
 # Clean up
-# rm -Rf data
-# rm places.csv
+rm -Rf data
+rm places.csv

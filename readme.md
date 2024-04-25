@@ -14,7 +14,9 @@ gem install sequel
 
 ## Running the API service
 
-First, run the `setup.sh` file to download the data and set up the database.
+If you haven't already, authorize `awscli` with your account.
+
+Run the `setup.sh` file to download the data and set up the database.
 
 ```bash
 ./setup.sh

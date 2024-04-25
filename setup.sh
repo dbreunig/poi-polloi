@@ -3,15 +3,20 @@
 # Create a folder called data
 mkdir -p data
 
-# Find the most recent parquet directory with the theme 'places'
-recent_dir=$(aws s3 ls s3://overturemaps-us-west-2/release/ --recursive | grep "theme=places" | sort | tail -n 1 | awk -F '/' '{print $1"/"$2"/"$3"/"$4}')
-
-# Extract the release date from the directory path
-release_date=$(echo $recent_dir | awk -F '/' '{print $2}')
+# Download the json file and load the release_date string with the latest key
+release_json=$(curl -s 'https://labs.overturemaps.org/data/releases.json')
+release_date=$(echo $release_json | jq -r '.latest')
 
 # Download the entire directory
 echo "Downloading data from ${release_date}"
-# aws s3 cp s3://overturemaps-us-west-2/release/$release_date/theme=places data/${release_date} --recursive
+aws s3 cp s3://overturemaps-us-west-2/release/$release_date/theme=places data/${release_date} --recursive
+
+# Access the downloaded data and print the headers for the parquet to stdout
+echo "Accessing the downloaded data and printing the headers"
+duckdb :memory: <<SQL
+  INSTALL parquet;
+  PRAGMA table_info(parquet_scan('data/${release_date}/type=place/*.parquet'));
+SQL
 
 # Extract the data you want into a CSV file
 echo "Extracting data from ${release_date}"
@@ -25,7 +30,7 @@ duckdb :memory: <<SQL
       ST_X(ST_GeomFromWKB(geometry)) AS longitude,
       ST_Y(ST_GeomFromWKB(geometry)) AS latitude,
       names.primary,
-      updateTime,
+      update_time,
       categories.main as main_category,
       categories.alternate as alternate_categories,
       confidence,
@@ -172,5 +177,5 @@ SELECT COUNT(*) FROM places;
 SQL
 
 # Clean up
-rm -Rf data
-rm places.csv
+# rm -Rf data
+# rm places.csv

@@ -19,9 +19,9 @@ duckdb :memory: <<SQL
   COPY (
     SELECT
       id,
-      ST_GeomFromWKB(geometry) AS geometry,
-      ST_X(ST_GeomFromWKB(geometry)) AS longitude,
-      ST_Y(ST_GeomFromWKB(geometry)) AS latitude,
+      geometry,
+      ST_X(geometry) AS longitude,
+      ST_Y(geometry) AS latitude,
       names.primary,
       categories.primary as main_category,
       categories.alternate as alternate_categories,
